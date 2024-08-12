@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    username: root
+    password: DAN123
+    url: jdbc:mysql://localhost:3306/task_management_system?useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
+
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+token:
+  signing:
+    key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+
+api:
+  endpoint:
+    base-url: http://localhost:8080/api/v1/auth/task
