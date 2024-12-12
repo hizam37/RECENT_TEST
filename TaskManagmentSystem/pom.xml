@@ -8,11 +8,10 @@
 		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.hizam</groupId>
 	<artifactId>TaskManagmentSystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TaskUserService</name>
-	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -38,8 +37,13 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<version>6.3.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>6.3.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -155,7 +159,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.example.task_management_service.TaskUserServiceApplication</mainClass>
+							<mainClass>com.hizam.task_management_service.TaskUserServiceApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
