@@ -25,8 +25,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -111,7 +110,7 @@ public class TaskControllerEndpointsTest {
     @Test
     public void deleteANonExistingTaskTest() throws Exception {
         doThrow(new TaskException("performer with id " + 1L + " does not exist")).when(taskService).deleteTaskByPerformerId(1L);
-        mockMvc.perform(post("/api/v1/auth/login/delete_task_by_id/{taskId}", 1L).with(user("dan").roles("ADMIN")))
+        mockMvc.perform(delete("/api/v1/auth/login/delete_task_by_id/{taskId}", 1L).with(user("dan").roles("ADMIN")))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
     }
@@ -120,7 +119,7 @@ public class TaskControllerEndpointsTest {
     @Test
     public void deleteAnExistingTaskTest() throws Exception {
         doNothing().when(taskService).deleteTaskByPerformerId(1L);
-        mockMvc.perform(post("/api/v1/auth/login/delete_task_by_id/{taskId}", 1L).with(user("dan").roles("ADMIN")))
+        mockMvc.perform(delete("/api/v1/auth/login/delete_task_by_id/{taskId}", 1L).with(user("dan").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -163,7 +162,7 @@ public class TaskControllerEndpointsTest {
         when(referenceTokenRepository.findByReferenceToken(cookies[1].getValue())).thenReturn(referenceToken);
         when(taskRepository.findByPerformerId(referenceToken.getPerformerId())).thenReturn(task);
         doNothing().when(taskService).updateMyTask(task, request);
-        mockMvc.perform(post("/api/v1/auth/login/update_my_task").with(user("adam").roles("PERFORMER"))
+        mockMvc.perform(put("/api/v1/auth/login/update_my_task").with(user("adam").roles("PERFORMER"))
                         .content(asJsonString(task))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -184,7 +183,7 @@ public class TaskControllerEndpointsTest {
         task.setPerformerId(2L);
         task.setComment("has to be solved");
         doNothing().when(taskService).updateTaskByPerformerId(task,task.getPerformerId());
-        mockMvc.perform(post("/api/v1/auth/login/update/{performerId}",2).with(user("dan").roles("ADMIN"))
+        mockMvc.perform(put("/api/v1/auth/login/update/{performerId}",2).with(user("dan").roles("ADMIN"))
                 .content(asJsonString(task))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

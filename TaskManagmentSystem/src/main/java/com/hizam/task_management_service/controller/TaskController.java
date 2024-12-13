@@ -94,7 +94,7 @@ public class TaskController {
             @Parameter(name = "taskId", description = "carries the id of the performer")},
             responses = {@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))
                     , @ApiResponse(responseCode = "400", description = "throws TaskException with message if the performer does not exist", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskException.class)))})
-    @PostMapping("/delete_task_by_id/{taskId}")
+    @DeleteMapping("/delete_task_by_id/{taskId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteTaskByPerformerId(@PathVariable Long taskId) {
         taskService.deleteTaskByPerformerId(taskId);
@@ -129,8 +129,8 @@ public class TaskController {
      * Updates task
      * exclusively used by performer without interfering with other users ex:admin or performers with another id
      *
-     * @param request  uses the reference token which carries the id of the performer
-     * that was saved in the cookie when the performer logged in
+     * @param request         uses the reference token which carries the id of the performer
+     *                        that was saved in the cookie when the performer logged in
      * @param taskToBeUpdated carries the status and comment of the task that the performer has made
      * @return response body "Task updated successfully" if done successfully
      */
@@ -141,7 +141,7 @@ public class TaskController {
             parameters = {@Parameter(name = "request", description = "uses the reference token which carries the id of the performer\n" +
                     "     *                that was saved in the cookie when the performer logged in")},
             responses = {@ApiResponse(responseCode = "200", description = "Task updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))})
-    @PostMapping("/update_my_task")
+    @PutMapping("/update_my_task")
     @PreAuthorize("hasRole('PERFORMER')")
     public ResponseEntity<?> updateMyTask(@RequestBody Task taskToBeUpdated, HttpServletRequest request) {
         taskService.updateMyTask(taskToBeUpdated, request);
@@ -153,7 +153,7 @@ public class TaskController {
      * Updates task
      * exclusively used by admin without interfering with other users ex:admin or performers with another id
      *
-     * @param task carries the updated info the task that was made by the admin
+     * @param task        carries the updated info the task that was made by the admin
      * @param performerId carries the assigned id the performer
      * @return response body "Task updated successfully" if done successfully
      */
@@ -162,9 +162,9 @@ public class TaskController {
     @Operation(summary = "Updates task" +
             "exclusively used by admin without interfering with other users ex:admin or performers with another id",
             parameters = {@Parameter(name = "task", description = "carries the updated info the task that was made by the admin"),
-            @Parameter(name = "performerId",description = "carries the assigned id the performer")},
+                    @Parameter(name = "performerId", description = "carries the assigned id the performer")},
             responses = {@ApiResponse(responseCode = "200", description = "Task updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))})
-    @PostMapping("/update/{performerId}")
+    @PutMapping("/update/{performerId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTaskOfThePerformer(@RequestBody Task task, @PathVariable Long performerId) {
         taskService.updateTaskByPerformerId(task, performerId);
