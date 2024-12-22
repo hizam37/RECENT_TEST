@@ -1,7 +1,8 @@
 package com.hizam.task_management_service;
 
-
+import com.hizam.task_management_service.dto.TaskDto;
 import com.hizam.task_management_service.exception.TaskException;
+import com.hizam.task_management_service.mapper.TaskMapper;
 import com.hizam.task_management_service.model.*;
 import com.hizam.task_management_service.repository.ReferenceTokenRepository;
 import com.hizam.task_management_service.repository.TaskCriteriaRepository;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,6 +47,9 @@ public class TaskServiceTest {
     @MockBean
     private UserRepository userRepository;
 
+    @Autowired
+    private TaskMapper taskMapper;
+
     @MockBean
     private TaskCriteriaRepository taskCriteriaRepository;
 
@@ -56,13 +59,13 @@ public class TaskServiceTest {
     @Test
     @DisplayName("Testing Creating task")
     public void createTask() {
-        Task task = new Task();
-        task.setTaskStatus(TaskStatus.PENDING);
-        task.setTaskPriority(TaskPriority.HIGH);
-        task.setAuthor("Anton");
-        task.setDescription("Deploy Project");
-        task.setTitle("Java Development");
-        task.setPerformerId(1L);
+        TaskDto taskDto = new TaskDto();
+        taskDto.setTaskStatus(TaskStatus.PENDING);
+        taskDto.setTaskPriority(TaskPriority.HIGH);
+        taskDto.setAuthor("Anton");
+        taskDto.setDescription("Deploy Project");
+        taskDto.setTitle("Java Development");
+        taskDto.setPerformerId(1L);
         var user = User.builder()
                 .id(1L)
                 .email("dan@gmail.com")
@@ -70,8 +73,8 @@ public class TaskServiceTest {
                 .role(Role.ROLE_PERFORMER)
                 .build();
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        taskService.addTask(task);
-        assertEquals(task.getPerformerId(),user.getId());
+        taskService.addTask(taskDto);
+        assertEquals(taskDto.getPerformerId(),user.getId());
     }
 
 
@@ -79,29 +82,29 @@ public class TaskServiceTest {
     @DisplayName("Testing creating task for an admin")
     public void throwExceptionWhenCreatingTaskForAdmin()
     {
-        Task task = new Task();
-        task.setTaskStatus(TaskStatus.PENDING);
-        task.setTaskPriority(TaskPriority.HIGH);
-        task.setAuthor("Anton");
-        task.setDescription("Deploy Project");
-        task.setTitle("Java Development");
-        task.setPerformerId(1L);
+        TaskDto taskDto = new TaskDto();
+        taskDto.setTaskStatus(TaskStatus.PENDING);
+        taskDto.setTaskPriority(TaskPriority.HIGH);
+        taskDto.setAuthor("Anton");
+        taskDto.setDescription("Deploy Project");
+        taskDto.setTitle("Java Development");
+        taskDto.setPerformerId(1L);
         doThrow(new TaskException("Task cannot be assigned to an admin")).when(userRepository).findById(1L);
-        assertThrows(TaskException.class,()->taskService.addTask(task));
+        assertThrows(TaskException.class,()->taskService.addTask(taskDto));
     }
 
     @Test
     @DisplayName("Testing creating task for un existed performer")
     public void throwExceptionWhenCreatingTaskForUnExistedPerformer()
     {
-        Task task = new Task();
-        task.setTaskStatus(TaskStatus.PENDING);
-        task.setTaskPriority(TaskPriority.HIGH);
-        task.setAuthor("Anton");
-        task.setDescription("Deploy Project");
-        task.setTitle("Java Development");
-        doThrow(new TaskException("Performer with id + " + task.getPerformerId() + " does not exist")).when(userRepository).findById(task.getPerformerId());
-        assertThrows(TaskException.class,()->taskService.addTask(task));
+        TaskDto taskDto = new TaskDto();
+        taskDto.setTaskStatus(TaskStatus.PENDING);
+        taskDto.setTaskPriority(TaskPriority.HIGH);
+        taskDto.setAuthor("Anton");
+        taskDto.setDescription("Deploy Project");
+        taskDto.setTitle("Java Development");
+        doThrow(new TaskException("Performer with id + " + taskDto.getPerformerId() + " does not exist")).when(userRepository).findById(taskDto.getPerformerId());
+        assertThrows(TaskException.class,()->taskService.addTask(taskDto));
     }
 
 
@@ -123,7 +126,7 @@ public class TaskServiceTest {
         TaskSearchCriteria taskSearchCriteria = new TaskSearchCriteria();
         Page<Task> page = new PageImpl<>(Collections.singletonList(task));
         when(taskCriteriaRepository.findAllWithFilters(taskPage,taskSearchCriteria)).thenReturn(page);
-        assertEquals(taskService.getTasks(taskPage,taskSearchCriteria),page);
+        assertEquals(taskService.getTasks(taskPage,taskSearchCriteria),taskMapper.taskToTaskDtoPage(page));
     }
 
 

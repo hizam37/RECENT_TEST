@@ -1,5 +1,6 @@
 package com.hizam.task_management_service.service.implementations;
 
+import com.hizam.task_management_service.dto.TaskDto;
 import com.hizam.task_management_service.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
@@ -9,10 +10,10 @@ import java.util.Optional;
 public interface TaskServiceImpl {
 
 
-    Page<Task> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria);
+    Page<TaskDto> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria);
 
 
-    Task addTask(Task task);
+    TaskDto addTask(TaskDto task);
 
 
 
@@ -20,7 +21,7 @@ public interface TaskServiceImpl {
 
     void updateMyTask(Task task, HttpServletRequest request);
 
-    Task viewMyTask(HttpServletRequest request);
+    TaskDto viewMyTask(HttpServletRequest request);
 
     void deleteTaskByPerformerId(Long performerId);
 

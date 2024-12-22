@@ -2,6 +2,7 @@ package com.hizam.task_management_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hizam.task_management_service.dto.TaskDto;
 import com.hizam.task_management_service.exception.TaskException;
 import com.hizam.task_management_service.model.*;
 import com.hizam.task_management_service.repository.ReferenceTokenRepository;
@@ -20,7 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
-import java.util.Optional;
+
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -49,7 +50,7 @@ public class TaskControllerEndpointsTest {
 
     @Test
     public void createTaskTest() throws Exception {
-        Task task = new Task();
+        TaskDto task = new TaskDto();
         task.setTaskStatus(TaskStatus.PENDING);
         task.setTaskPriority(TaskPriority.HIGH);
         task.setAuthor("Anton");
@@ -72,7 +73,7 @@ public class TaskControllerEndpointsTest {
 
     @Test
     public void createTaskForAdminTest() throws Exception {
-        Task task = new Task();
+        TaskDto task = new TaskDto();
         task.setTaskStatus(TaskStatus.PENDING);
         task.setTaskPriority(TaskPriority.HIGH);
         task.setAuthor("Anton");
@@ -90,7 +91,7 @@ public class TaskControllerEndpointsTest {
 
     @Test
     public void getTasksTest() throws Exception {
-        Task task = new Task();
+        TaskDto task = new TaskDto();
         task.setId(1L);
         task.setTitle("deployment");
         task.setDescription("deploying a project");
@@ -128,7 +129,7 @@ public class TaskControllerEndpointsTest {
 
     @Test
     public void getMyTaskTest() throws Exception {
-        Task task = new Task();
+        TaskDto task = new TaskDto();
         task.setId(1L);
         task.setTitle("deployment");
         task.setDescription("deploying a project");

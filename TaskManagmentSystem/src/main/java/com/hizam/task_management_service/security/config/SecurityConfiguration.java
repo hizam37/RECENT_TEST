@@ -1,6 +1,5 @@
 package com.hizam.task_management_service.security.config;
 
-
 import com.hizam.task_management_service.security.filter.JwtAuthenticationFilter;
 import com.hizam.task_management_service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +32,6 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()

@@ -1,7 +1,7 @@
 package com.hizam.task_management_service.controller;
 
 
-import com.hizam.task_management_service.dto.JwtAuthenticationResponse;
+import com.hizam.task_management_service.dto.TaskDto;
 import com.hizam.task_management_service.exception.TaskException;
 import com.hizam.task_management_service.model.*;
 import com.hizam.task_management_service.service.TaskService;
@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/v1/auth/login")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@CrossOrigin
 @Tag(name = "Task api", description = "This class provides endpoints used for controlling tasks")
 public class TaskController {
 
@@ -39,7 +40,7 @@ public class TaskController {
      * Creates a task
      * exclusively by the Admin without interfering with other users ex:performer
      *
-     * @param task carries the info of the task
+     * @param taskDto carries the info of the task
      * @return the entity task
      * @throws TaskException if the admin is assigning the task to another admin instead of the performer
      */
@@ -54,8 +55,8 @@ public class TaskController {
                     @ApiResponse(responseCode = "400", description = "throws TaskException with message Performer with id + task.getPerformerId() + does not exist if the performer does not exist")})
     @PostMapping("/create")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Task createTask(@RequestBody Task task) {
-        return taskService.addTask(task);
+    public TaskDto createTask(@RequestBody TaskDto taskDto) {
+        return taskService.addTask(taskDto);
     }
 
 
@@ -75,7 +76,7 @@ public class TaskController {
             responses = {@ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class)))})
     @GetMapping("/view_tasks")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Page<Task>> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria) {
+    public ResponseEntity<Page<TaskDto>> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria) {
         return new ResponseEntity<>(taskService.getTasks(taskPage, taskSearchCriteria), HttpStatus.OK);
     }
 
@@ -120,7 +121,7 @@ public class TaskController {
                     , @ApiResponse(responseCode = "400", description = "throws TaskException with message task does not exist if the task is created yet by the admin", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskException.class)))})
     @GetMapping("/view_my_task")
     @PreAuthorize("hasRole('ROLE_PERFORMER')")
-    public Task getMyTask(HttpServletRequest request) {
+    public TaskDto getMyTask(HttpServletRequest request) {
         return taskService.viewMyTask(request);
     }
 

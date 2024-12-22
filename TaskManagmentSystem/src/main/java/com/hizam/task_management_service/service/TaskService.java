@@ -1,6 +1,8 @@
 package com.hizam.task_management_service.service;
 
+import com.hizam.task_management_service.dto.TaskDto;
 import com.hizam.task_management_service.exception.TaskException;
+import com.hizam.task_management_service.mapper.TaskMapper;
 import com.hizam.task_management_service.model.*;
 import com.hizam.task_management_service.repository.ReferenceTokenRepository;
 import com.hizam.task_management_service.repository.TaskCriteriaRepository;
@@ -31,12 +33,18 @@ public class TaskService implements TaskServiceImpl {
 
     private final UserRepository userRepository;
 
+    private final TaskMapper taskMapper;
 
-    public Page<Task> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria) {
-        return taskCriteriaRepository.findAllWithFilters(taskPage, taskSearchCriteria);
+
+    @Override
+    public Page<TaskDto> getTasks(TaskPage taskPage, TaskSearchCriteria taskSearchCriteria) {
+        Page<Task> tasks = taskCriteriaRepository.findAllWithFilters(taskPage, taskSearchCriteria);
+        return taskMapper.taskToTaskDtoPage(tasks);
     }
 
-    public Task addTask(Task task) {
+    @Override
+    public TaskDto addTask(TaskDto taskDto) {
+        Task task = taskMapper.taskDtoToTaskEntity(taskDto);
         if (userRepository.findById(task.getPerformerId()).isEmpty()) {
             throw new TaskException("Performer with id + " + task.getPerformerId() + " does not exist");
         }
@@ -44,10 +52,12 @@ public class TaskService implements TaskServiceImpl {
         {
             throw new TaskException("Task cannot be assigned to an admin");
         }
-        return taskRepository.save(task);
+        taskRepository.save(task);
+
+        return taskMapper.taskToTaskDto(task);
     }
 
-
+    @Override
     public void updateTaskByPerformerId(Task task, Long performerId) {
         taskCriteriaRepository.updateTaskByPerformerId(task, performerId);
     }
@@ -76,7 +86,7 @@ public class TaskService implements TaskServiceImpl {
     }
 
     @Override
-    public Task viewMyTask(HttpServletRequest request) {
+    public TaskDto viewMyTask(HttpServletRequest request) {
 
         Cookie[] cookies = request.getCookies();
 
@@ -84,7 +94,8 @@ public class TaskService implements TaskServiceImpl {
 
             ReferenceToken referenceToken = referenceTokenRepository.findByReferenceToken(cookie.getValue());
 
-            return taskRepository.findByPerformerId(referenceToken.getPerformerId());
+          Task taskFound = taskRepository.findByPerformerId(referenceToken.getPerformerId());
+          return taskMapper.taskToTaskDto(taskFound);
 
         }
 
